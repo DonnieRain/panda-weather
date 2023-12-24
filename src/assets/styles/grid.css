@@ -1,0 +1,27 @@
+.wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+
+    @media (max-width: 1024px) {
+        max-width: 1024px;
+    }
+    @media (max-width: 768px) {
+        max-width: 768px;
+    }
+    @media (max-width: 640px) {
+        max-width: 100%;
+    }
+}
+
+.flex {
+    display: flex;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}

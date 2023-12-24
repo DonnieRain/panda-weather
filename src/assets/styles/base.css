@@ -1,0 +1,39 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    font-weight: normal;
+}
+
+body {
+    min-height: 100vh;
+    background: #1A1B1F;
+    font-size: 15px;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+ol, ul {
+	list-style: none;
+    padding-left: 0;
+}
+
+.modal-blur {
+    position: fixed;
+    overflow: hidden;
+    background-color: rgba(11, 19, 31, .45);
+    backdrop-filter: blur(3px);
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh;
+    overscroll-behavior: contain;
+    z-index: 9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}

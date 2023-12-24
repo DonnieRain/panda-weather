@@ -1,0 +1,53 @@
+.tabs-wrapper {
+    .tabs {
+        margin-bottom: 20px;
+    }
+
+    .tab {
+        cursor: pointer;
+        padding: 12px 24px;
+        margin-right: 20px;
+        width: 120px;
+        text-align: center;
+        font-weight: bold;
+        border-radius: 18px;
+        transition: background 0.1s, color 0.1s;
+        color: #8a8a8a;
+        background: linear-gradient(145deg, #1c1d21, #17181c);
+        box-shadow:  3px 3px 6px #101114, 
+                    -3px -3px 6px #24252a;
+        
+        &:hover {
+            background: #141414;
+            color: #bbb;
+        }
+
+        &.active {
+            cursor: default;
+            padding: 14px 22px 10px 26px;
+            background: #1A1B1F;
+            box-shadow: inset  3px 3px 6px #101114, 
+                        inset -3px -3px 6px #24252a; 
+            color: #6a6a6a;
+        }
+    }
+
+    .tab-content {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+        /* padding: 46px;
+        min-height: 288px; 
+        border-radius: 18px;
+        background: linear-gradient(145deg, #1c1d21, #17181c);
+        box-shadow:  3px 3px 6px #101114, 
+                    -3px -3px 6px #24252a; */
+    }
+
+    .slide-fade-enter-active, .slide-fade-leave-active {
+        transition: transform 0.5s ease-in-out, opacity 0.5s ease-in-out;
+    }
+
+    .slide-fade-enter, .slide-fade-leave-to {
+        transform: translateX(10px);
+        opacity: 0;
+    }
+}

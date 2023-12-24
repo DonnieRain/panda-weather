@@ -1,0 +1,14 @@
+{
+    "mainTab": "Main",
+    "choosenTab": "Choosen",
+    "currentTemp": "Current temperature",
+    "temperature": "Temperature",
+    "day": "Day",
+    "night": "Night",
+    "week": "Week",
+    "date": "Date",
+    "lngEn": "EN",
+    "lngUk": "UK",
+    "cardError": "You already have 5 cards saved. Remove city to add.",
+    "confirmDeleteTitle": "Are you sure you want to delete the card?"
+}
