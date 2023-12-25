@@ -1,10 +1,13 @@
 import dayjs from 'dayjs'
-import 'dayjs/locale/uk'
 
 export const getCurrentDay = (day) => {
     return dayjs(day).format('MMM,DD')
 }
 
-export const changeDateLocale = (val) => {
-    val ? dayjs.locale('uk') : dayjs.locale('en')
+export const getDayWeek = (week) => {
+    const date = dayjs()
+    if (week) {
+        return date.add(7, 'day').format()
+    }
+    return dayjs().format()
 }

@@ -11,6 +11,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@vueuse/components": "^10.7.0",
     "axios": "^1.6.2",
     "chart.js": "^3.9.1",
     "dayjs": "^1.11.10",

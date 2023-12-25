@@ -1,5 +1,6 @@
 <template>
-    <div class="main-tab-wrapper wrapper">
+    <div class="main-tab-wrapper">
+        <RadiusLoader v-if="loading"/>
         <div
             v-if="cardList.length > 0"
             class="card-wrapper"
@@ -12,14 +13,21 @@
                     @delete-card="deleteCard"
                 />
                 <a
-                    class="tab"
-                    style="display: block; align-self: center;"
+                    v-if="cardList.length < 5"
+                    class="add-card"
                     @click="addNewCard"
                 >
                     +
                 </a>
         </div>
-        
+        <EmptyList v-if="!loading && cardList.length === 0">
+            <a
+                class="add-card"
+                @click="addNewCard"
+            >
+                +
+            </a>
+        </EmptyList>
     </div>
 </template>
 
@@ -27,8 +35,11 @@
 import { ref, onMounted } from 'vue'
 import { getCurrentCity, fetchWeather } from '@/services/api.js'
 import CardWeather from '@/components/Card/CardWeather.vue'
+import RadiusLoader from '../RadiusLoader.vue';
+import EmptyList from '../EmptyList.vue';
 
 const cardList = ref([])
+const loading = ref(false)
 
 const changeCard = async (card) => {
     const { lat, lon, days } = card
@@ -45,34 +56,45 @@ const deleteCard = (data) => {
     cardList.value = cardList.value.filter((item) => item.id !== data.id)
 }
 
-onMounted(async () => {
+const getFirstCard = async () => {
     if (cardList.value.length === 0) {
-        const { lat, lon } = await getCurrentCity()
-        const firstCard = await fetchWeather(lat, lon, 1)
-        cardList.value.push({...firstCard, id: Date.now()})
+        try {
+            loading.value = true
+            const { lat, lon } = await getCurrentCity()
+            const firstCard = await fetchWeather(lat, lon, 1)
+            cardList.value.push({...firstCard, id: Date.now()})
+        } catch (e) {
+            console.log(e);
+        } finally {
+            loading.value = false
+        }
     }
+}
+
+onMounted(async () => {
+    getFirstCard()
 })
 </script>
 
 <style>
-/* .main-tab-wrapper {
-    
-} */
-.card-wrapper {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
-    gap: 20px;
-}
-.card {
-    min-width: 0; /* Разрешает сужение блока даже если его содержимое больше */
-    max-width: 100%; /* Ограничение на максимальную ширину блока */
-    min-height: 500px;
-    padding: 46px;
-    min-height: 288px; 
+.add-card {
+    cursor: pointer;
+    padding: 24px;
+    margin-right: 20px;
+    width: 120px;
+    text-align: center;
+    align-self: center;
+    font-weight: bold;
     border-radius: 18px;
+    transition: background 0.1s, color 0.1s;
+    color: #8a8a8a;
     background: linear-gradient(145deg, #1c1d21, #17181c);
     box-shadow:  3px 3px 6px #101114, 
                 -3px -3px 6px #24252a;
+    &:hover {
+        background: #141414;
+        color: #bbb;
+    }
 }
 .list-enter-active,
 .list-leave-active {

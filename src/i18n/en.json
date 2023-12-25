@@ -7,8 +7,11 @@
     "night": "Night",
     "week": "Week",
     "date": "Date",
-    "lngEn": "EN",
-    "lngUk": "UK",
+    "lngEn": "English",
+    "lngUk": "Ukrainian",
     "cardError": "You already have 5 cards saved. Remove city to add.",
-    "confirmDeleteTitle": "Are you sure you want to delete the card?"
+    "confirmDeleteTitle": "Are you sure you want to delete the card?",
+    "deleteFavorites": "The card has been successfully removed from favorites",
+    "addFavorites": "The card has been successfully added to favorites",
+    "emptyListText": "There are no cards attached"
 }

@@ -1,6 +1,21 @@
 <template>
-    <header class="flex justify-center wrapper">
+    <header class="flex justify-between items-center wrapper">
         <img src="https://pandateam.net.ua/images/panda_logo-100x100.png" alt="logo">
+        <div>
+            <label class="switch">
+                <div class="label-text">{{ t('lngEn') }} / {{ t('lngUk') }}</div>
+                <div class="toggle">
+                    <input
+                        v-model="lang"
+                        class="toggle-state"
+                        type="checkbox"
+                        name="lang"
+                        @input="setLang"
+                    />
+                    <div class="indicator"></div>
+                </div>
+            </label>
+        </div>
     </header>
     <main>
         <div class="tabs-wrapper wrapper">
@@ -19,20 +34,6 @@
                 >
                     {{ t('choosenTab') }}
                 </a>
-                <label class="label">
-                    <div class="label-text">{{ t('day') }}</div>
-                    <div class="toggle">
-                        <input
-                            v-model="lang"
-                            class="toggle-state"
-                            type="checkbox"
-                            name="lang"
-                            @input="setLang"
-                        />
-                        <div class="indicator"></div>
-                    </div>
-                    <div class="label-text">{{ t('week') }}</div>
-                </label>
             </div>
             <div class="tab-content">
                 <Transition name="slide-fade" mode="out-in">

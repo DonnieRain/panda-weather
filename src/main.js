@@ -20,6 +20,7 @@ const app = createApp(App, {
         return { t, d }
     }
 })
+
 app.use(i18n)
 app.use(router)
 

@@ -17,7 +17,7 @@ export const toogleBookmark = (data) => {
         setLocalStorage('bookmark', [data])
         return
     }
-    // якщо закладка є у списку -> видалити і записати результат | як немає записати
+
     const cardIndex = bookmark.findIndex((item) => item.id === data.id)
     if (cardIndex >= 0) {
         const newData = bookmark.filter((item) => item.id !== data.id)
@@ -25,8 +25,13 @@ export const toogleBookmark = (data) => {
     } else {
         setLocalStorage('bookmark', [...bookmark, data])
     }
-    
 }
+
+export const handleClickOutside = (event, elem) => {
+    if (elem && !elem.contains(event.target)) {
+      console.log('Clicked outside!');
+    }
+};
 
 
 

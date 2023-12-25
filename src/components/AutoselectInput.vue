@@ -1,14 +1,15 @@
 <template>
-    <div class="input-wrapper">
+    <div class="input-wrapper" v-on-click-outside="handleClickOutside">
         <input
             v-model="selectedCity"
             type="text"
             id="city"
             class="input"
             @input="handlerInput"
+            @click="showList = true"
         >
         <ul
-            v-if="cityList.length"
+            v-if="cityList.length && showList"
             class="input-list"
         >
             <li
@@ -26,15 +27,21 @@
 import { ref } from 'vue'
 import debounce from 'lodash.debounce'
 import { getCity } from '@/services/api.js'
+import { vOnClickOutside } from '@vueuse/components'
 
 const emit = defineEmits(['change'])
 
 const selectedCity = ref('')
 const cityList = ref([])
+const showList = ref(false)
 
 const getCityList = async () => {
-    if (selectedCity.value === '') return
+    if (selectedCity.value === '') {
+        showList.value = false
+        return
+    }
     cityList.value = await getCity(selectedCity.value)
+    showList.value = true
 }
 
 const changeCity = (city) => {
@@ -42,19 +49,26 @@ const changeCity = (city) => {
 }
 
 const handlerInput = debounce(getCityList, 1500)
+const handleClickOutside = () => {
+    showList.value = false
+}
+
 </script>
 
 <style>
     .input-wrapper {
         position: relative;
-
-        .input {
-            width: 300px;
+        width: 50%;
+        @media (max-width: 576px) {
+            width: 80%;
+        }
+        .input, .input-list {
+            width: 100%;
             border: 0;
             outline: 0;
             font-size: 16px;
             border-radius: 18px;
-            padding: 16px;
+            padding: 15px;
             background-color: #272727;
             text-shadow: 1px 1px 0 #212121;
             color: #feeeee;
@@ -68,10 +82,20 @@ const handlerInput = debounce(getCityList, 1500)
         }
         .input-list {
             position: absolute;
-            top: 50px;
+            top: 55px;
             left: 0;
             width: 100%;
-            background: #fff;
+            color: #8a8a8a;
+            padding: 10px 15px;
+
+            li {
+                margin: 5px 0;
+                cursor: pointer;
+                transition: color 0.2s;
+                &:hover {
+                    color: darkcyan;
+                }
+            }
         }
     }
 </style>

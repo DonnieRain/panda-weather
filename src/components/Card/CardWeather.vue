@@ -1,32 +1,31 @@
 <template>
     <div class="card">
-        <div class="flex align-center">
+        <div class="flex items-center justify-between">
             <AutoselectInput
                 @change="getInputData"
             />
             <div class="flex align-center">
                 <div class="bookmark-icon">
-                    <mdiDelete
-                        
-                        @click="showModal = true"
-                    />
+                    <mdiDelete @click="showModal = true"/>
                 </div>
-                <div class="bookmark-icon" :class="{'bookmark-icon--active' : checkActiveBookmark}">
-                    <mdiBookmark
-                        @click="save"
-                    />
+                <div
+                    v-if="!choose"
+                    class="bookmark-icon"
+                    :class="{'bookmark-icon--active' : checkActiveBookmark}"
+                >
+                    <mdiBookmark @click="save"/>
                 </div>
             </div>
         </div>
-        <div v-if="cardData?.current?.temp_c">
-            <div>
+        <div v-if="cardData?.current">
+            <div class="card-info">
                 <h2>{{ cardData?.location.name }}, {{ cardData.location.country }}</h2>
                 <p>{{ t('currentTemp') }}: {{ Math.round(cardData.current.temp_c) }}</p>
-                <p>{{ t('date') }}: {{ d(getDate, 'long', locale) }}</p>
+                <p>{{ t('date') }}: {{ getDate }}</p>
             </div>
-            <div>
-                <label class="label">
-                    <div class="label-text">{{ t('day') }}</div>
+            <div class="card-switches flex items-center">
+                <label class="switch">
+                    <div class="label-text">{{ t('day') }} / {{ t('night') }}</div>
                     <div class="toggle">
                         <input
                             v-model="isNight"
@@ -36,10 +35,9 @@
                         />
                         <div class="indicator"></div>
                     </div>
-                    <div class="label-text">{{ t('night') }}</div>
                 </label>
-                <label class="label">
-                    <div class="label-text">{{ t('day') }}</div>
+                <label class="switch">
+                    <div class="label-text">{{ t('day') }} / {{ t('week') }}</div>
                     <div class="toggle">
                         <input
                             v-model="isWeek"
@@ -50,14 +48,15 @@
                         />
                         <div class="indicator"></div>
                     </div>
-                    <div class="label-text">{{ t('week') }}</div>
                 </label>
             </div>
-            <WheatherChart
-                :weatherData="cardData"
-                :is-night="isNight"
-                :is-week="isWeek"
-            />
+            <div class="card-chart">
+                <WheatherChart
+                    :weatherData="cardData"
+                    :is-night="isNight"
+                    :is-week="isWeek"
+                />
+            </div>
         </div>
         <div v-if="showModal" class="modal-blur">
             <ConfirmModal
@@ -74,15 +73,18 @@ import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { fetchWeather } from '@/services/api.js'
 import { getBookmark, toogleBookmark } from '@/helpers/helper.js'
+import { getDayWeek } from '@/helpers/date.js'
 import useEventsBus from '@/helpers/eventBus.js'
 import AutoselectInput from '@/components/AutoselectInput.vue';
 import WheatherChart from '@/components/Charts/WeatherChart.vue'
 import ConfirmModal from '@/components/Modals/СonfirmationModal.vue'
 import mdiDelete from '@/components/icons/mdiDelete.vue'
 import mdiBookmark from '@/components/icons/mdiBookmark.vue'
+
 const emit = defineEmits(['change-card', 'delete-card', 'save-bookmark'])
 const props = defineProps({
     weather: Object,
+    choose: Boolean,
 })
 const { emitEvent } = useEventsBus()
 const { t, d, locale } = useI18n({ useScope: 'global' })
@@ -94,23 +96,14 @@ const bookmark = ref(null)
 const isWeek = ref(false)
 
 const getDate = computed(() => {
-    const currentDate = new Date();
-
     if (isWeek.value) {
-        currentDate.setDate(currentDate.getDate() + 7);
+        return `${d(getDayWeek(), 'long', locale)} - ${d(getDayWeek(isWeek.value), 'long', locale)}`
     }
-
-    const year = currentDate.getFullYear();
-    const month = (currentDate.getMonth() + 1).toString().padStart(2, '0');
-    const day = currentDate.getDate().toString().padStart(2, '0');
-
-    const formattedDate = `${year}-${month}-${day}`;
-    return formattedDate
+    return d(getDayWeek(), 'long', locale)
 })
 
 const checkActiveBookmark = computed(() => {
     if (bookmark.value) {
-        console.log(bookmark.value, cardData.value?.id);
         return bookmark.value.some((obj) => obj.id === cardData.value?.id)
     }
     return false
@@ -135,12 +128,17 @@ const updateBookmark = () => {
 
 const save = () => {
     const cardIndex = bookmark.value ? bookmark.value.findIndex((item) => item.id === cardData.value.id) : null
-    if (bookmark.value?.length >= 5 && !cardIndex) {
+    if (bookmark.value?.length >= 5 && cardIndex >= 0) {
         showSnackbar(t('cardError'), 'error')
         return
     }
     toogleBookmark(cardData.value)
     updateBookmark()
+    if (cardIndex >= 0) {
+        showSnackbar(t('deleteFavorites'), 'success')
+    } else {
+        showSnackbar(t('addFavorites'), 'success')
+    }
 }
 
  const getWeekData = async () => {
@@ -166,61 +164,64 @@ onMounted(() => {
 </script>
 
 <style>
-.bookmark-icon {
-    width: 30px;
-    
+.card-wrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    gap: 20px;
+    @media (max-width: 576px) {
+        grid-template-columns: 1fr;
+    }
 }
-.bookmark-icon--active {
-        svg {
-            fill: aqua;
+.card {
+    min-width: 0;
+    max-width: 100%;
+    min-height: 500px;
+    padding: 45px;
+    min-height: 288px; 
+    border-radius: 18px;
+    background: linear-gradient(145deg, #1c1d21, #17181c);
+    box-shadow:  3px 3px 6px #101114, 
+                -3px -3px 6px #24252a;
+    @media (max-width: 576px) {
+        padding: 20px;
+    }
+
+    .card-info {
+        h2 {
+            color: #f1eeee;
+            margin-top: 20px;
+        }
+        p {
+            font-size: 18px;
+            margin: 5px 0;
+            color: #8a8a8a;
         }
     }
-.label {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  color: #394a56;
-}
-
-.label-text {
-  margin-left: 16px;
-}
-
-.toggle {
-    isolation: isolate;
-    position: relative;
-    height: 30px;
-    width: 60px;
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow:
-        -8px -4px 8px 0px #10111483,
-        8px 4px 12px 0px #24252aea,
-        4px 4px 4px 0px #24252aea inset,
-        -4px -4px 4px 0px #10111483 inset;
+    .card-switches {
+        justify-content: flex-end;
+        gap: 20px;
     }
-
-.toggle-state {
-    display: none;
+    .card-chart {
+        margin-top: 20px;
+    }
+}
+.bookmark-icon {
+    width: 30px;
+    cursor: pointer;
+    svg {
+        transition: .2s;
+    } 
+    &:hover {
+        svg {
+            transition: .2s;
+            fill: #394a56;
+        } 
+    }
+}
+.bookmark-icon--active {
+    svg {
+        fill: aqua;
+    }
 }
 
-.indicator {
-    height: 100%;
-    width: 200%;
-    background: #394a56;
-    border-radius: 15px;
-    transform: translate3d(-75%, 0, 0);
-    transition: transform 0.4s cubic-bezier(0.85, 0.05, 0.18, 1.35);
-    box-shadow:
-        -8px -4px 8px 0px #1b1d22,
-        8px 4px 12px 0px #2a2c31;
-}
-
-.toggle-state:checked ~ .indicator {
-    transform: translate3d(25%, 0, 0);
-    background: #24252a;
-    box-shadow:
-            -8px -4px 8px 0px #101114,
-            8px 4px 12px 0px #24252a;
-}
 </style>

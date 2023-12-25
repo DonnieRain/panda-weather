@@ -27,7 +27,7 @@ watch(()=>busEvent.value.get('show-snackbar'), (val) => {
         visible.value = false
         type.value = ''
         message.value = ''
-    }, 2000)
+    }, 3000)
 })
 </script>
   
