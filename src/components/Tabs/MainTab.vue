@@ -60,8 +60,8 @@ const getFirstCard = async () => {
     if (cardList.value.length === 0) {
         try {
             loading.value = true
-            const { lat, lon } = await getCurrentCity()
-            const firstCard = await fetchWeather(lat, lon, 1)
+            const { latitude, longitude } = await getCurrentCity()
+            const firstCard = await fetchWeather(latitude, longitude, 1)
             cardList.value.push({...firstCard, id: Date.now()})
         } catch (e) {
             console.log(e);

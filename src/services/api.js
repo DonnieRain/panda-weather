@@ -20,7 +20,7 @@ export const getCity = async (selectedCity) => {
 
 export const getCurrentCity = async () => {
     try {
-        const { data } = await axios.get('http://ip-api.com/json')
+        const { data } = await axios.get(`https://api.ipdata.co?api-key=${import.meta.env.VITE_APP_IP_KEY}`)
         return data
     } catch (e) {
         console.log(e);
