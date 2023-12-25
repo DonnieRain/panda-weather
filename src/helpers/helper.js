@@ -8,7 +8,11 @@ export const getLocalStorage = (key) => {
 }
 
 export const getBookmark = () => {
-    return getLocalStorage('bookmark')
+    const data = getLocalStorage('bookmark')
+    if (!data) {
+        setLocalStorage('bookmark', [])
+    }
+    return !data ? [] : getLocalStorage('bookmark')
 }
 
 export const toogleBookmark = (data) => {
